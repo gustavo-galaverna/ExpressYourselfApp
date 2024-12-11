@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ExpressYourself.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpressYourself.Infrastructure.Persistence;
 

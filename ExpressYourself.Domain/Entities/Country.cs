@@ -1,7 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace ExpressYourself.Infrastructure;
+namespace ExpressYourself.Domain.Entities;
 
 public partial class Country
 {
