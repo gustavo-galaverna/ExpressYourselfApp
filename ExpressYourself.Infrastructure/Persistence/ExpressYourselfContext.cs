@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExpressYourself.Infrastructure.Persistence;
 
-public partial class ExpressYourselfContext(DbContextOptions options) : DbContext(options)
+public partial class ExpressYourselfContext(DbContextOptions<ExpressYourselfContext> options) : DbContext(options)
 {
-    public virtual DbSet<Country> Countries { get; set; }
-
-    public virtual DbSet<IpAddress> Ipaddresses { get; set; }
-
+    public virtual DbSet<Country> Countries { get; set; } = null!;
+    public virtual DbSet<IpAddress> IpAddresses { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

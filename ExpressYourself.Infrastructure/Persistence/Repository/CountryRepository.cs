@@ -1,5 +1,6 @@
 using ExpressYourself.Domain.Entities;
 using ExpressYourself.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpressYourself.Infrastructure.Persistence.Repository;
 
@@ -9,10 +10,18 @@ public class CountryRepository(ExpressYourselfContext expressYourselfContext) : 
 
     public async Task<Country> CreateCountryAsync(Country country)
     {
-        await _context.Countries.AddAsync(country);
+        _context.Countries.Add(country);
 
         await _context.SaveChangesAsync();
 
         return country;
+    }
+
+    public async Task<Country> GetCountryByNameAsync(string twoLetterCode, string threeLetterCode)
+    {
+        var country = await _context.Countries.FirstOrDefaultAsync(c => c.TwoLetterCode.ToLower().Equals(twoLetterCode.ToLower()) 
+                                                                    && c.ThreeLetterCode.ToLower().Equals(threeLetterCode));
+
+        return country!;
     }
 }

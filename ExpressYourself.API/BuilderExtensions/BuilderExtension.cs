@@ -1,5 +1,4 @@
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 using ExpressYourself.Application.Mappings;
 using ExpressYourself.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +6,12 @@ using ExpressYourself.Domain.Interfaces;
 using ExpressYourself.Infrastructure.Persistence.Repository;
 using ExpressYourself.Application.Interfaces;
 using ExpressYourself.Application.Services;
+using ExpressYourself.Infrastructure.Services;
+using ExpressYourself.Application;
+using ExpressYourself.API.Jobs;
+using ExpressYourself.Infrastructure;
+using System.Reflection;
+
 namespace ExpressYourself.API.BuilderExtensions;
 
 public static class BuilderExtension
@@ -15,8 +20,11 @@ public static class BuilderExtension
     {
         builder.Services.AddScoped<ICountryRepository, CountryRepository>();
         builder.Services.AddScoped<IIpAddressRepository, IpAddressRepository>();
+        builder.Services.AddScoped<DatabaseConnection>();
+        builder.Services.AddScoped<IIpCountryReportRepository, IpCountryReportRepository>();
         builder.Services.AddScoped<ICountryService, CountryService>();
         builder.Services.AddScoped<IIpAddressService, IpAddressService>();
+        builder.Services.AddScoped<UpdateIpInformationService>();
      
     }   
     public static void AddContext(this WebApplicationBuilder builder)
@@ -41,10 +49,27 @@ public static class BuilderExtension
             { 
                 Title = "API V1", Version = "v1" 
             }); 
+
             var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
         });
         
+    }
+
+    public static void AddHttpClient(this WebApplicationBuilder builder)
+    {
+        var configuration = builder.Configuration;
+        builder.Services.AddHttpClient<IIP2CService, IP2CService>(client =>
+        {
+            client.BaseAddress = new Uri(configuration["IP2C:Uri"]!);
+            client.Timeout = TimeSpan.FromSeconds(10);
+        });
+
+    }
+
+    public static void AddBackgroundServices(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddHostedService<IpUpdateJob>();
     }
 
 }

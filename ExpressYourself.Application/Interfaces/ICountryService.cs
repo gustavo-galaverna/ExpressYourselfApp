@@ -1,9 +1,9 @@
 using ExpressYourself.Application.Models.Countries;
+using ExpressYourself.Domain.Entities;
 
 namespace ExpressYourself.Application.Interfaces;
 
 public interface ICountryService
 {
-    Task CreateCountryAsync(CreateCountryRequest request);
-    
+    Task<Country> GetOrCreateCountry(CreateCountryRequest request);   
 }

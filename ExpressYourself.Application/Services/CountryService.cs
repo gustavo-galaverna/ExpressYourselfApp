@@ -2,6 +2,7 @@ using AutoMapper;
 using ExpressYourself.Application.Interfaces;
 using ExpressYourself.Application.Models.Countries;
 using ExpressYourself.Domain.Entities;
+using ExpressYourself.Domain.Exceptions;
 using ExpressYourself.Domain.Interfaces;
 
 namespace ExpressYourself.Application.Services;
@@ -11,36 +12,30 @@ public class CountryService(ICountryRepository countryRepository, IMapper mapper
     private readonly ICountryRepository _countryRepository = countryRepository;
     private readonly IMapper _mapper = mapper;
 
-    public async Task CreateCountryAsync(CreateCountryRequest request)
+    public async Task<Country> GetOrCreateCountry(CreateCountryRequest request)
     {
-        Country country;
 
         if(string.IsNullOrEmpty(request.TwoLetterCode) || request.TwoLetterCode.Length > 2)
         {
-            throw new InvalidDataException("Invalid country two letter code.");
+            throw new InvalidCountryException("Invalid country two letter code.");
         }else if(string.IsNullOrEmpty(request.ThreeLetterCode) || request.ThreeLetterCode.Length > 3)
         {
-            throw new InvalidDataException("Invalid country three letter code.");
+            throw new InvalidCountryException("Invalid country three letter code.");
         }else if(string.IsNullOrEmpty(request.CountryName))
         {
-          throw new InvalidDataException("Invalid country name.");   
+          throw new InvalidCountryException("Invalid country name.");   
         }
-        
-        try
+
+        var country = await _countryRepository.GetCountryByNameAsync(request.TwoLetterCode!, request.ThreeLetterCode!);
+        if(country is null)
         {
             country = _mapper.Map<Country>(request);
-            if(country is null)
-            {
-                throw new Exception("Country initialization has failed.");
-            }
 
             country = await _countryRepository.CreateCountryAsync(country);
-
-        }
-        catch(Exception)
-        {
-            throw;
         }
 
+        if(country is null) throw new InvalidCountryException("Country could not be created.");
+
+        return country;
     }
 }
