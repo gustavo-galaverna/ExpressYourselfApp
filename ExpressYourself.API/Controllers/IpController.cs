@@ -11,7 +11,7 @@ public class IpController(IIpAddressService ipAddressService) : ControllerBase
     private readonly IIpAddressService _ipAddressService = ipAddressService;
 
     /// <summary>
-    /// Returns details of the giving IP address
+    /// Returns details of the given IP address
     /// </summary>
     /// <remarks>
     /// Request example:
@@ -32,7 +32,7 @@ public class IpController(IIpAddressService ipAddressService) : ControllerBase
 
 
     /// <summary>
-    /// Returns a report of the giving countries or all countries in case country codes are null
+    /// Returns a report of the given countries or all countries in case country codes are null
     /// </summary>
     /// <remarks>
     /// Request example:
