@@ -4,6 +4,8 @@
 
 This repository contains the implementation of an application that manages IP information and their respective countries. The application uses a SQL Server database, a .NET API, and a Redis server for caching. The Redis server and the application are configured to run in Docker containers.
 
+I have separated the repository into two branches: one using Redis and the other using Microsoft's caching service. The branch to be considered for this assignment is the 'redis' branch.
+
 ## Features
 
 - Get IP Details: The API exposes an endpoint that returns details for a specific IP (Country Name, Two and Three Letter Country Code).
