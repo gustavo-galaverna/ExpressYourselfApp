@@ -5,20 +5,19 @@ using ExpressYourself.Application.Models.IpAddresses;
 using ExpressYourself.Domain.Entities;
 using ExpressYourself.Domain.Exceptions;
 using ExpressYourself.Domain.Interfaces;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace ExpressYourself.Application.Services;
 
 public class IpAddressService(IIpAddressRepository ipAddressRepository, IMapper mapper, 
-                                IMemoryCache cache, IIP2CService iP2CService,
-                                IIpCountryReportRepository ipCountryReportRepository, ICountryService countryService) : IIpAddressService
+                                IIP2CService iP2CService, IIpCountryReportRepository ipCountryReportRepository, 
+                                ICountryService countryService, ICacheService cacheService) : IIpAddressService
 {
     private readonly IIpAddressRepository _ipRepository = ipAddressRepository;
     private readonly IMapper _mapper = mapper;
-    private readonly IMemoryCache _cache = cache;
     private readonly IIP2CService _iP2CService = iP2CService;
     private readonly IIpCountryReportRepository _ipCountryReportRepository = ipCountryReportRepository;
     private readonly ICountryService _countryService = countryService;
+    private readonly ICacheService _cacheService = cacheService;
 
     public async Task<IpDetailResponse> CreateIpAddressAsync(IpDetails request)
     {
@@ -78,7 +77,7 @@ public class IpAddressService(IIpAddressRepository ipAddressRepository, IMapper 
 
     public async Task<IpDetailResponse> GetIpDetails(string ip)
     {
-        _cache.TryGetValue("ips", out List<IpDetailResponse>? ips);
+        List<IpDetailResponse>? ips = await _cacheService.GetAsync<List<IpDetailResponse>>("ips");
         if(ips is not null)
         {
              var cachedIp = ips.FirstOrDefault(i => i.IpAddress == ip);
@@ -95,7 +94,7 @@ public class IpAddressService(IIpAddressRepository ipAddressRepository, IMapper 
         if (ipDetails != null)
         {
             ips.Add(ipDetails);
-            _cache.Set("ips", ips, TimeSpan.FromHours(5));
+            await _cacheService.SetAsync("ips", ips, TimeSpan.FromHours(5));
             return ipDetails;
         }
 
@@ -106,7 +105,7 @@ public class IpAddressService(IIpAddressRepository ipAddressRepository, IMapper 
         ips.Add(ipDetails);
 
 
-        _cache.Set("ips", ips, TimeSpan.FromHours(5));
+        await _cacheService.SetAsync("ips", ips, TimeSpan.FromHours(5));
 
         return ipDetails;
 

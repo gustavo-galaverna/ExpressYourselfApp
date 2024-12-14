@@ -71,8 +71,7 @@ public class IpControllerTests
         string[] countryCodes = { "TC", "US" };
         var reportResponse = new List<IpCountryReportResponse>
         {
-            new IpCountryReportResponse
-            {
+            new() {
                 CountryName = "Test Country",
                 AddressesCount = 5,
                 LastAddressUpdated = DateTime.UtcNow
