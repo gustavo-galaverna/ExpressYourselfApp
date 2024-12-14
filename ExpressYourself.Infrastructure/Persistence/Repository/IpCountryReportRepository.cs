@@ -1,4 +1,3 @@
-using System.Data;
 using Dapper;
 using ExpressYourself.Domain.Entities;
 using ExpressYourself.Domain.Interfaces;

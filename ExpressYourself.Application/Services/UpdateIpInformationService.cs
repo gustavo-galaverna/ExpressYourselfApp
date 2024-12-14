@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Caching.Memory;
 using ExpressYourself.Domain.Interfaces;
 using ExpressYourself.Domain.Entities;
 using ExpressYourself.Application.Models.IpAddresses;

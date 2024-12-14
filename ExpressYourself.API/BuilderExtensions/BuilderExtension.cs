@@ -84,10 +84,6 @@ public static class BuilderExtension
             options.InstanceName = "instance";
             options.Configuration = redisConnectionString;
         });
-
-
-
-
     }
 
 }

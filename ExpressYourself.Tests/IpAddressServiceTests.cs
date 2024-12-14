@@ -44,8 +44,7 @@ public class IpAddressServiceTests
         var ip = "192.168.0.1";
         var cachedResponse = new List<IpDetailResponse>
         {
-            new IpDetailResponse
-            {
+            new() {
                 IpAddress = ip,
                 CountryName = "Test Country",
                 TwoLetterCode = "TC",
@@ -86,8 +85,8 @@ public class IpAddressServiceTests
         var countryCodes = new[] { "TC", "US" };
         var countryList = new List<IpCountryReport>
         {
-            new IpCountryReport { AddressesCount = 1, CountryName = "Brazil", LastAddressUpdated = DateTime.Now},
-            new IpCountryReport { AddressesCount = 2, CountryName = "France", LastAddressUpdated = DateTime.Now }
+            new() { AddressesCount = 1, CountryName = "Brazil", LastAddressUpdated = DateTime.Now},
+            new() { AddressesCount = 2, CountryName = "France", LastAddressUpdated = DateTime.Now }
         };
 
         _ipCountryReportRepositoryMock.Setup(r => r.GetCountryByIpAsync(It.IsAny<string>()))
@@ -97,8 +96,8 @@ public class IpAddressServiceTests
         _mapperMock.Setup(m => m.Map<List<IpCountryReportResponse>>(It.IsAny<List<IpCountryReport>>()))
             .Returns(new List<IpCountryReportResponse>
             {
-                new IpCountryReportResponse { AddressesCount = 1, CountryName = "Brazil", LastAddressUpdated = DateTime.Now},
-                new IpCountryReportResponse { AddressesCount = 2, CountryName = "France", LastAddressUpdated = DateTime.Now }
+                new() { AddressesCount = 1, CountryName = "Brazil", LastAddressUpdated = DateTime.Now},
+                new() { AddressesCount = 2, CountryName = "France", LastAddressUpdated = DateTime.Now }
             });
 
         // Act
