@@ -24,6 +24,7 @@ public static class BuilderExtension
         builder.Services.AddScoped<IIpCountryReportRepository, IpCountryReportRepository>();
         builder.Services.AddScoped<ICountryService, CountryService>();
         builder.Services.AddScoped<IIpAddressService, IpAddressService>();
+        builder.Services.AddScoped<ICacheService, CacheService>();
         builder.Services.AddScoped<UpdateIpInformationService>();
      
     }   
@@ -70,6 +71,23 @@ public static class BuilderExtension
     public static void AddBackgroundServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddHostedService<IpUpdateJob>();
+    }
+
+    public static void AddRedis(this WebApplicationBuilder builder)
+    {
+        var redisHost = builder.Configuration["Redis:Host"];
+        var redisPort = builder.Configuration["Redis:Port"];
+        var redisConnectionString = $"{redisHost}:{redisPort}";
+
+        builder.Services.AddStackExchangeRedisCache(options =>
+        {
+            options.InstanceName = "instance";
+            options.Configuration = redisConnectionString;
+        });
+
+
+
+
     }
 
 }

@@ -10,16 +10,15 @@ builder.AddHttpClient();
 builder.AddMappings();
 builder.AddSwagger();
 builder.AddBackgroundServices();
-builder.Services.AddMemoryCache();
+builder.AddRedis();
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 
 app.UseHttpsRedirection();

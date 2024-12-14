@@ -6,18 +6,18 @@ using ExpressYourself.Application.Models.IpAddresses;
 namespace ExpressYourself.Application;
 
 public class UpdateIpInformationService(IIpAddressRepository repository, 
-                                        IIP2CService ip2cService, IMemoryCache cache)
+                                        IIP2CService ip2cService, ICacheService cacheService)
 {
     private readonly IIpAddressRepository _repository = repository;
     private readonly IIP2CService _ip2cService = ip2cService;
-    private readonly IMemoryCache _cache = cache;
+    private readonly ICacheService _cacheService = cacheService;
 
 
     public async Task UpdateIpInformationAsync()
     {
         const int batchSize = 100;
         List<IpAddress> batch;
-        _cache.TryGetValue("ips", out List<IpDetailResponse>? cachedIps);
+        List<IpDetailResponse>? cachedIps = await _cacheService.GetAsync<List<IpDetailResponse>>("ips");
         int cachedCount = cachedIps?.Count ?? 0;
         do
         {
@@ -48,6 +48,6 @@ public class UpdateIpInformationService(IIpAddressRepository repository,
         while (batch.Count == batchSize);
 
         if(cachedIps is not null && cachedIps.Count != cachedCount)
-            _cache.Set("ips", cachedIps);
+                await _cacheService.SetAsync("ips", cachedIps, TimeSpan.FromHours(5));
     }
 }
