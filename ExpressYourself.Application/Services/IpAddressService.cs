@@ -5,6 +5,7 @@ using ExpressYourself.Application.Models.IpAddresses;
 using ExpressYourself.Domain.Entities;
 using ExpressYourself.Domain.Exceptions;
 using ExpressYourself.Domain.Interfaces;
+using ExpressYourself.Application.Helper;
 
 namespace ExpressYourself.Application.Services;
 
@@ -77,6 +78,8 @@ public class IpAddressService(IIpAddressRepository ipAddressRepository, IMapper 
 
     public async Task<IpDetailResponse> GetIpDetails(string ip)
     {
+        if(!IpHelper.IsValidIP(ip)) throw new InvalidIpException("Given IP is not a valid IP.");
+
         List<IpDetailResponse>? ips = await _cacheService.GetAsync<List<IpDetailResponse>>("ips");
         if(ips is not null)
         {

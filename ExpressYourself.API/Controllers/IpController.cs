@@ -1,5 +1,7 @@
 using ExpressYourself.Application.Interfaces;
 using ExpressYourself.Application.Models.IpAddresses;
+using ExpressYourself.Domain.Exceptions;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpressYourself.API.Controllers;
@@ -21,13 +23,24 @@ public class IpController(IIpAddressService ipAddressService) : ControllerBase
     [HttpGet("details")]
     public async Task<ActionResult<IpDetailResponse>> IpDetails(string ip)
     {
-        var response = await _ipAddressService.GetIpDetails(ip);
-        if(response is null)
+        try
         {
-            return BadRequest("IP details not found.");
+            var response = await _ipAddressService.GetIpDetails(ip);
+            if(response is null)
+            {
+                return BadRequest("IP details not found.");
+            }
+
+            return Ok(response);            
+        }
+        catch (Exception ex)
+        {
+            if (ex is InvalidIpException || ex is InvalidCountryException)
+                return BadRequest(ex.Message);
+            else
+                return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong. Try again later.");
         }
 
-        return Ok(response);
     }
 
 
@@ -45,12 +58,25 @@ public class IpController(IIpAddressService ipAddressService) : ControllerBase
     [HttpPost("report")]
     public async Task<ActionResult<List<IpCountryReportResponse>>> CountriesReport(string[]? countryCodes)
     {
-        var response = await _ipAddressService.GetCountryByIpAsync(countryCodes!);
-        if(response is null || response.Count <=0)
+        
+        try
         {
-            return BadRequest("No IP's found for the giving country codes.");
+            var response = await _ipAddressService.GetCountryByIpAsync(countryCodes!);
+            if(response is null || response.Count <=0)
+            {
+                return BadRequest("No IP's found for the giving country codes.");
+            }
+
+            return Ok(response);               
+        }
+        catch (Exception ex)
+        {
+            if (ex is InvalidIpException || ex is InvalidCountryException)
+                return BadRequest(ex.Message);
+            else
+                return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong. Try again later.");
         }
 
-        return Ok(response);       
+    
     }
 }
